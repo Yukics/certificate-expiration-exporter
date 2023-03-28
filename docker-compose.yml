@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  sai:
+  certificate-exporter:
     build: .
     ports:
       - 8980:8980
