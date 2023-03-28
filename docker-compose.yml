@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  sai:
+    build: .
+    ports:
+      - 8980:8980
+    environment:
+      - PORT=8980
+    volumes:
+      - ./cert_exporter.py:/app/cert_exporter.py
+    networks:
+      - monitoring
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+        reservations:
+          memory: 100m
+networks:
+  monitoring:
+    external: true
+
+
