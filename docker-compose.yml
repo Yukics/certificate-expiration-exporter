@@ -8,6 +8,7 @@ services:
       - PORT=8980
     volumes:
       - ./cert_exporter.py:/app/cert_exporter.py
+      - ./url.txt:/app/url.txt
     networks:
       - monitoring
     deploy:
