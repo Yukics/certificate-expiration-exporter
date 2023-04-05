@@ -25,7 +25,7 @@ def get_url_info(url, port):
         s.connect((url, port))
         cert = s.getpeercert()
 
-    # print(json.dumps(cert,sort_keys=True, indent=4))
+    #? print(json.dumps(cert,sort_keys=True, indent=4))
 
     return dict(x[0] for x in cert['subject'])['commonName'], dict(x[0] for x in cert['issuer'])['organizationName'], cert['notAfter'], cert['notBefore']
 
@@ -40,7 +40,7 @@ class AppMetrics:
         self.polling_interval_seconds = polling_interval_seconds
 
         # Prometheus metrics to collect
-        self.https_cert_time_left = Gauge("https_cert_time_left", "Status of https webs", ['hostname', 'ca', 'creation_date'])
+        self.https_cert_time_left = Gauge("https_cert_time_left", "Status of https webs", ['url', 'hostname', 'ca', 'creation_date'])
 
         # Get url_array
         self.url_array = get_url_array()
@@ -58,9 +58,11 @@ class AppMetrics:
         """
         url_array = get_url_array()
         for url in url_array:
-            hostname, ca, creation_date, expiration_date = get_url_info(url.split(":")[0], int(url.split(":")[1]))
-            self.https_cert_time_left.labels(hostname, ca, parse_datetime(creation_date)).set(parse_datetime(expiration_date))
-
+            try:
+                hostname, ca, creation_date, expiration_date = get_url_info(url.split(":")[0], int(url.split(":")[1]))
+                self.https_cert_time_left.labels(url.strip(), hostname, ca, parse_datetime(creation_date)).set(parse_datetime(expiration_date))
+            except:
+                print("ERROR: Couldnt retrieve {}".format(url))    
 
 if __name__ == "__main__":
     print("Starting http-cert-exporter...")

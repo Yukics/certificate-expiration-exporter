@@ -1,0 +1,343 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 4,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "6DMrWY-4k"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "text",
+              "mode": "fixed"
+            },
+            "custom": {
+              "align": "right",
+              "cellOptions": {
+                "type": "color-text"
+              },
+              "filterable": true,
+              "inspect": false
+            },
+            "decimals": 2,
+            "mappings": [
+              {
+                "options": {
+                  "from": 0,
+                  "result": {
+                    "color": "red",
+                    "index": 0
+                  },
+                  "to": 1672362
+                },
+                "type": "range"
+              },
+              {
+                "options": {
+                  "from": 1672362,
+                  "result": {
+                    "color": "yellow",
+                    "index": 1
+                  },
+                  "to": 1672362000
+                },
+                "type": "range"
+              }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "ms"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Creation"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "dateTimeAsIso"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Expiracy"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "dateTimeAsIso"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Time Left"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "ms"
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "thresholds"
+                  }
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "red",
+                        "value": null
+                      },
+                      {
+                        "color": "#EAB839",
+                        "value": 16723620
+                      },
+                      {
+                        "color": "green",
+                        "value": 1672362000
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 29,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 2,
+        "options": {
+          "footer": {
+            "countRows": false,
+            "enablePagination": false,
+            "fields": [],
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": false,
+              "displayName": "Hostname"
+            }
+          ]
+        },
+        "pluginVersion": "9.4.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "6DMrWY-4k"
+            },
+            "editorMode": "builder",
+            "exemplar": false,
+            "expr": "https_cert_time_left",
+            "format": "table",
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "A"
+          }
+        ],
+        "title": "Certificates expiration",
+        "transformations": [
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Creation",
+              "binary": {
+                "left": "Value",
+                "operator": "*",
+                "reducer": "sum",
+                "right": "1000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              }
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Expiracy",
+              "binary": {
+                "left": "creation_date",
+                "operator": "*",
+                "reducer": "sum",
+                "right": "1000"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              }
+            }
+          },
+          {
+            "id": "groupBy",
+            "options": {
+              "fields": {
+                "CA": {
+                  "aggregations": [],
+                  "operation": "groupby"
+                },
+                "Creation": {
+                  "aggregations": [],
+                  "operation": "groupby"
+                },
+                "Expiracy": {
+                  "aggregations": [],
+                  "operation": "groupby"
+                },
+                "Hostname": {
+                  "aggregations": [],
+                  "operation": "groupby"
+                },
+                "Time": {
+                  "aggregations": [],
+                  "operation": "groupby"
+                },
+                "ca": {
+                  "aggregations": [],
+                  "operation": "groupby"
+                },
+                "hostname": {
+                  "aggregations": [],
+                  "operation": "groupby"
+                },
+                "url": {
+                  "aggregations": [],
+                  "operation": "groupby"
+                }
+              }
+            }
+          },
+          {
+            "id": "calculateField",
+            "options": {
+              "alias": "Time Left",
+              "binary": {
+                "left": "Expiracy",
+                "operator": "-",
+                "reducer": "sum",
+                "right": "Time"
+              },
+              "mode": "binary",
+              "reduce": {
+                "reducer": "sum"
+              }
+            }
+          },
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time": true,
+                "Value": true,
+                "__name__": true,
+                "creation_date": true,
+                "group": true,
+                "instance": true,
+                "job": true
+              },
+              "indexByName": {},
+              "renameByName": {
+                "ca": "CA",
+                "group": "",
+                "hostname": "Hostname",
+                "url": "URL"
+              }
+            }
+          },
+          {
+            "id": "filterByValue",
+            "options": {
+              "filters": [
+                {
+                  "config": {
+                    "id": "equal",
+                    "options": {
+                      "value": ""
+                    }
+                  },
+                  "fieldName": "url"
+                }
+              ],
+              "match": "all",
+              "type": "exclude"
+            }
+          }
+        ],
+        "type": "table"
+      }
+    ],
+    "refresh": "",
+    "revision": 1,
+    "schemaVersion": 38,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Certificates",
+    "uid": "OsQCr8B4k",
+    "version": 31,
+    "weekStart": ""
+  }
